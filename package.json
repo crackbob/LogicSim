@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --minify --outfile=static/logic.min.js",
+    "watch": "esbuild src/index.js --bundle --minify --outfile=static/logic.min.js --watch"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
