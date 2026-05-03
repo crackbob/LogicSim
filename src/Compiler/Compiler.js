@@ -12,6 +12,7 @@ export default class Compiler {
 
     toComponent (components) {
         this.task = new CompilerTask(this, components);
+
         return {
             inputs: this.task.getComponentsByType("input").length,
             outputs: this.task.getTotalOutputs(),
@@ -19,6 +20,7 @@ export default class Compiler {
             instanceCompilations: this.task.getComponentsToCompile().length,
             execute: this.task.compile(),
             components: structuredClone(components),
+            clone: () => this.compile(components)
         }
     }
 }

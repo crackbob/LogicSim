@@ -233,28 +233,82 @@
         }
     },
 
-    "register4": {
-        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
-        "input_4": {},
+    "dFlipFlop": {
+        "input_0": {},
+        "input_1": {},
 
+        
+        "not_0": {
+            "inputs": ["input_1"]
+        },
         "dLatch_0": {
-            "inputs": ["input_0", "input_4"]
+            "inputs": ["input_0", "not_0_0"]
         },
-
+        
         "dLatch_1": {
-            "inputs": ["input_1", "input_4"]
-        },
-
-        "dLatch_2": {
-            "inputs": ["input_2", "input_4"]
-        },
-
-        "dLatch_3": {
-            "inputs": ["input_3", "input_4"]
+            "inputs": ["dLatch_0_0", "input_1"]
         },
 
         "output_0": {
-            "outputs": ["dLatch_0_0", "dLatch_1_0", "dLatch_2_0", "dLatch_3_0"]
+            "outputs": ["dLatch_1_0"]
+        }
+    },
+
+    "register": {
+        "input_0": {},
+        "input_1": {},
+        "input_2": {},
+
+        "external_0": 0,
+        
+        "not_0": {
+            "inputs": ["input_1"]
+        },
+        
+        "and_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+
+        "and_1": {
+            "inputs": ["external_0", "not_0_0"]
+        },
+
+        "or_1": {
+            "inputs": ["and_0_0", "and_1_0"]
+        },
+        
+        "dFlipFlop_0": {
+            "inputs": ["or_1_0", "input_2"],
+            "outputs": ["external_0"]
+        },
+
+        "output_0": {
+            "outputs": ["external_0"]
+        }
+    },
+
+    "register4": {
+        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
+        "input_4": {}, "input_5": {},
+
+        "register_0": {
+            "inputs": ["input_0", "input_4", "input_5"]
+        },
+
+        "register_1": {
+            "inputs": ["input_1", "input_4", "input_5"]
+        },
+
+        "register_2": {
+            "inputs": ["input_2", "input_4", "input_5"]
+        },
+
+        "register_3": {
+            "inputs": ["input_3", "input_4", "input_5"]
+        },
+
+        "output_0": {
+            "outputs": ["register_0_0", "register_1_0", "register_2_0", "register_3_0"]
         }
     }
 }
