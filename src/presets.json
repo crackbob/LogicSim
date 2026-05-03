@@ -30,6 +30,20 @@
         }
     },
 
+    "nor": {
+        "input_0": {},
+        "input_1": {},
+        "or_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "not_0": {
+            "inputs": ["or_0_0"]
+        },
+        "output_0": {
+            "outputs": ["not_0_0"]
+        }
+    },
+
     "xor": {
         "input_0": {},
         "input_1": {},
@@ -98,7 +112,84 @@
                 "adder_3_0",
                 "adder_2_0",
                 "adder_1_0",
-                "adder_0_0"
+                "adder_0_0",
+                "adder_3_1"
+            ]
+        }
+    },
+
+    "alu": {
+        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
+        "input_4": {}, "input_5": {}, "input_6": {}, "input_7": {},
+
+        "input_8": {},
+
+
+        "xor_0": {
+            "inputs": ["input_4", "input_8"]
+        },
+
+        "xor_1": {
+            "inputs": ["input_5", "input_8"]
+        },
+
+        "xor_2": {
+            "inputs": ["input_6", "input_8"]
+        },
+
+        "xor_3": {
+            "inputs": ["input_7", "input_8"]
+        },
+
+
+        "adder4_0": {
+            "inputs": ["input_0", "input_1", "input_2", "input_3", "xor_0_0", "xor_1_0", "xor_2_0", "xor_3_0", "input_8"]
+        },
+
+
+        "not_0": {
+            "inputs": ["adder4_0_0", "input_8"]
+        },
+
+        "not_1": {
+            "inputs": ["adder4_0_1", "input_8"]
+        },
+
+        "not_2": {
+            "inputs": ["adder4_0_2", "input_8"]
+        },
+
+        "not_3": {
+            "inputs": ["adder4_0_3", "input_8"]
+        },
+
+
+        "and_0": {
+            "inputs": ["not_0_0", "not_1_0"]
+        },
+
+        "and_1": {
+            "inputs": ["and_0_0", "not_2_0"]
+        },
+
+        "and_2": {
+            "inputs": ["and_1_0", "not_3_0"]
+        },
+
+        "output_0": {
+            "outputs": [
+                "adder4_0_0",
+                "adder4_0_1",
+                "adder4_0_2",
+                "adder4_0_3"
+            ]
+        },
+
+        "output_3": {
+            "outputs": [
+                "adder4_0_4",
+                "adder4_0_0",
+                "and_2_0"
             ]
         }
     }

@@ -21,7 +21,7 @@ export default class CompilerTask {
         let split = name.split("_");
         return {
             type: split[0],
-            index: parseInt(split[1]),
+            index: parseInt(split[1] || 0),
             valueIndex: parseInt(split[2] || 0)
         }
     }
