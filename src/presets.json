@@ -1,0 +1,106 @@
+{
+    "nand": {
+        "input_0": {},
+        "input_1": {},
+        "and_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "not_0": {
+            "inputs": ["and_0_0"]
+        },
+        "output_0": {
+            "outputs": ["not_0_0"]
+        }
+    },
+
+    "or": {
+        "input_0": {},
+        "input_1": {},
+        "not_0": {
+            "inputs": ["input_0"]
+        },
+        "not_1": {
+            "inputs": ["input_1"]
+        },
+        "nand_0": {
+            "inputs": ["not_0_0", "not_1_0"]
+        },
+        "output_0": {
+            "outputs": ["nand_0_0"]
+        }
+    },
+
+    "xor": {
+        "input_0": {},
+        "input_1": {},
+        "or_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "nand_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "and_0": {
+            "inputs": ["or_0_0", "nand_0_0"]
+        },
+        "output_0": {
+            "outputs": ["and_0_0"]
+        }
+    },
+
+    "adder": {
+        "input_0": {},
+        "input_1": {},
+        "input_2": {},
+        "xor_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "and_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "xor_1": {
+            "inputs": ["xor_0_0", "input_2"]
+        },
+        "and_1": {
+            "inputs": ["xor_0_0", "input_2"]
+        },
+        "or_0": {
+            "inputs": ["and_0_0", "and_1_0"]
+        },
+        "output_0": {
+            "outputs": ["xor_1_0", "or_0_0"]
+        }
+    },
+
+    "adder4": {
+        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
+        "input_4": {}, "input_5": {}, "input_6": {}, "input_7": {},
+
+        "input_8": {},
+
+        "adder_0": {
+            "inputs": ["input_0", "input_4", "input_8"]
+        },
+
+        "adder_1": {
+            "inputs": ["input_1", "input_5", "adder_0_1"]
+        },
+
+        "adder_2": {
+            "inputs": ["input_2", "input_6", "adder_1_1"]
+        },
+
+        "adder_3": {
+            "inputs": ["input_3", "input_7", "adder_2_1"]
+        },
+
+        "output_0": {
+            "outputs": [
+                "adder_0_0",
+                "adder_1_0",
+                "adder_2_0",
+                "adder_3_0",
+                "adder_3_1"
+            ]
+        }
+    }
+}
