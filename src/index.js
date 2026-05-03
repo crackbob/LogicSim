@@ -1,5 +1,6 @@
 import Compiler from "./Compiler/Compiler";
 import presets from "./presets.json"
+import mathUtils from "./utils/mathUtils";
 
 let library = {
     "not": {
@@ -22,3 +23,4 @@ Object.keys(presets).forEach(presetName => {
 })
 
 window.test = test;
+window.mathUtils = mathUtils;

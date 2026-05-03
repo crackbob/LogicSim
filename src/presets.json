@@ -78,28 +78,27 @@
         "input_8": {},
 
         "adder_0": {
-            "inputs": ["input_0", "input_4", "input_8"]
+            "inputs": ["input_3", "input_7", "input_8"]
         },
 
         "adder_1": {
-            "inputs": ["input_1", "input_5", "adder_0_1"]
+            "inputs": ["input_2", "input_6", "adder_0_1"]
         },
 
         "adder_2": {
-            "inputs": ["input_2", "input_6", "adder_1_1"]
+            "inputs": ["input_1", "input_5", "adder_1_1"]
         },
 
         "adder_3": {
-            "inputs": ["input_3", "input_7", "adder_2_1"]
+            "inputs": ["input_0", "input_4", "adder_2_1"]
         },
 
         "output_0": {
             "outputs": [
-                "adder_0_0",
-                "adder_1_0",
-                "adder_2_0",
                 "adder_3_0",
-                "adder_3_1"
+                "adder_2_0",
+                "adder_1_0",
+                "adder_0_0"
             ]
         }
     }
