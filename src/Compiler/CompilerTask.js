@@ -4,17 +4,26 @@ export default class CompilerTask {
     constructor (compilerInstance, components, onCall = () => {}) {
         this.compilerInstance = compilerInstance;
         this.components = components;
+
+        this.scope = {
+            instanceCompiled: {},
+            call: this.callFromComponent.bind(this),
+            compileForThis: this.compileForComponent.bind(this),
+        };
     }
 
     callFromComponent (name, ...inputs) {
-        return this.compilerInstance.library[name].execute(...inputs);
+        let target = this.compilerInstance.library[name]?.execute;
+
+        if (!target) {
+            target = this.scope.instanceCompiled[name]?.execute;
+        }
+
+        return target(...inputs);
     }
 
-    get scope () {
-        let context = this;
-        return {
-            call: context.callFromComponent.bind(context)
-        };
+    compileForComponent (componentName) {
+        return this.compilerInstance.toComponent(structuredClone(this.compilerInstance.library[componentName].components));
     }
 
     parseComponentKey (name) {
@@ -45,6 +54,11 @@ export default class CompilerTask {
     getComponentReturnArr (name, componentIndex = 0) {
         const library = this.compilerInstance.library;
         const outputs = library[name].outputs;
+        const thisComponent = this.components[`${name}_${componentIndex}`];
+
+        if (thisComponent?.outputs) {
+            return thisComponent?.outputs;
+        }
 
         return new Array(outputs).fill(name).map((p, i) => `${p}_${componentIndex}_${i}`);
     }
@@ -53,12 +67,61 @@ export default class CompilerTask {
         return this.buildFunctionReturns().length;
     }
 
+    buildExternalDefinitionStatements () {
+        let str = "";
+
+        this.getComponentNamesByType("external").forEach(external => {
+            str += `let ${external} = ${this.components[external]}; ${stringUtils.newLine}`
+        })
+
+        return str;
+    }
+
+    buildInstanceCompileStatements () {
+        let str = "";
+
+        this.getComponentsToCompile().forEach(rawComponentName => {
+            let parsed = this.parseComponentKey(rawComponentName);
+            str += `this.instanceCompiled["${rawComponentName}"] = this.compileForThis("${parsed.type}");${stringUtils.newLine}`
+        })
+
+        return str;
+    }
+
+    componentUsesExternals (name) {
+        return !!this.compilerInstance.library[name].externals;
+    }
+
+    componentUsesInstanceCompilation(component) {
+        let parsed = this.parseComponentKey(component);
+        let definition = this.compilerInstance.library[parsed.type];
+        return definition?.externals || definition?.instanceCompilations;
+    }
+
+    getComponentsToCompile () {
+        return Object.keys(this.components).filter(component => {
+            return this.componentUsesInstanceCompilation(component);
+        })
+    }
+
     buildCallStatement (rawComponentName) {
         const componentInfo = this.parseComponentKey(rawComponentName);
         const inputs = this.components[rawComponentName].inputs;
         const returnArrayStr = stringUtils.strArray(this.getComponentReturnArr(componentInfo.type, componentInfo.index));
+        const callingComponentUsesExternals = this.componentUsesInstanceCompilation(componentInfo.type);
 
-        return `${stringUtils.indent}let ${returnArrayStr} = this.call("${componentInfo.type}", ${stringUtils.strArray(inputs, false)}); ${stringUtils.newLine}`;
+        let nameToCall = componentInfo.type;
+        let keyword = "let ";
+
+        if (returnArrayStr.includes("external")) {
+            keyword = "";
+        }
+
+        if (callingComponentUsesExternals) {
+            nameToCall = rawComponentName;
+        }
+
+        return `${stringUtils.indent}${keyword}${returnArrayStr} = this.call("${nameToCall}", ${stringUtils.strArray(inputs, false)}); ${stringUtils.newLine}`;
     }
 
     buildFunctionBody () {
@@ -67,18 +130,19 @@ export default class CompilerTask {
         for (let rawComponentName in this.components) {
             let componentInfo = this.parseComponentKey(rawComponentName);
             
-            if (componentInfo.type !== "input" && componentInfo.type !== "output") {
+            if (componentInfo.type !== "input" && componentInfo.type !== "output" && componentInfo.type !== "external") {
                 str += this.buildCallStatement(rawComponentName);
             }
 
         }
 
-        str += `${stringUtils.indent}return ${stringUtils.strArray(this.buildFunctionReturns())};`
+        str += `${stringUtils.indent}return ${stringUtils.strArray(this.buildFunctionReturns())}; ${stringUtils.newLine}`
 
         return str;
     }
 
     compile () {
-        return Function(...this.buildFunctionArguments(), this.buildFunctionBody()).bind(this.scope);
+        let externalFunction = Function(`${this.buildExternalDefinitionStatements()} ${this.buildInstanceCompileStatements()} return function CompiledComponent (${this.buildFunctionArguments()}) {${stringUtils.newLine}${this.buildFunctionBody()}}`);
+        return externalFunction.bind(this.scope)().bind(this.scope);
     }
 }

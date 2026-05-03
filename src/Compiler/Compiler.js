@@ -15,7 +15,10 @@ export default class Compiler {
         return {
             inputs: this.task.getComponentsByType("input").length,
             outputs: this.task.getTotalOutputs(),
-            execute: this.task.compile()
+            externals: this.task.getComponentsByType("external").length,
+            instanceCompilations: this.task.getComponentsToCompile().length,
+            execute: this.task.compile(),
+            components: structuredClone(components),
         }
     }
 }

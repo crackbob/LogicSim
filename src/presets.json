@@ -192,5 +192,69 @@
                 "and_2_0"
             ]
         }
+    },
+
+    "srLatch": {
+        "external_0": 0,
+        "input_0": {},
+        "input_1": {},
+        "or_0": {
+            "inputs": ["external_0", "input_0"]
+        },
+        "not_0": {
+            "inputs": ["input_1"]
+        },
+        "and_0": {
+            "inputs": ["or_0_0", "not_0_0"],
+            "outputs": ["external_0"]
+        },
+        "output_0": {
+            "outputs": ["external_0"]
+        }
+    },
+
+    "dLatch": {
+        "input_0": {},
+        "input_1": {},
+        "and_0": {
+            "inputs": ["input_0", "input_1"]
+        },
+        "not_0": {
+            "inputs": ["input_0"]
+        },
+        "and_1": {
+            "inputs": ["input_1", "not_0_0"]
+        },
+        "srLatch_0": {
+            "inputs": ["and_0_0", "and_1_0"]
+        },
+        "output_0": {
+            "outputs": ["srLatch_0_0"]
+        }
+    },
+
+    "register4": {
+        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
+        "input_4": {},
+
+        "dLatch_0": {
+            "inputs": ["input_0", "input_4"]
+        },
+
+        "dLatch_1": {
+            "inputs": ["input_1", "input_4"]
+        },
+
+        "dLatch_2": {
+            "inputs": ["input_2", "input_4"]
+        },
+
+        "dLatch_3": {
+            "inputs": ["input_3", "input_4"]
+        },
+
+        "output_0": {
+            "outputs": ["dLatch_0_0", "dLatch_1_0", "dLatch_2_0", "dLatch_3_0"]
+        }
     }
 }
