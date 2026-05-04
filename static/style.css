@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+
+    --theme-color: #161616;
+}
+
+.root {
+    background: var(--theme-color);
+    width: 100vw;
+    height: 100vh;
+
+    font-family: sans-serif;
+}
+
+.component {
+    --component-primary-color: rgb(50, 50, 50);
+    --component-outline-color: color-mix(in srgb, var(--component-primary-color) 75%,rgb(0, 0, 0));
+    --component-text-color: white;
+
+    position: absolute;
+    left: 100px;
+    top: 100px;
+    width: 150px;
+    height: 70px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    user-select: none;
+
+    outline: 2px solid var(--component-outline-color);
+    border-bottom: 5px solid var(--component-outline-color);
+    background: var(--component-primary-color)
+}
+
+.component-label {
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--component-text-color);
+}

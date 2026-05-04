@@ -27,16 +27,7 @@ export default class CompilerTask {
     }
 
     compileForComponent (componentName) {
-        return this.compilerInstance.toComponent(structuredClone(this.compilerInstance.library[componentName].components));
-    }
-
-    parseComponentKey (name) {
-        let split = name.split("_");
-        return {
-            type: split[0],
-            index: parseInt(split[1] || 0),
-            valueIndex: parseInt(split[2] || 0)
-        }
+        return this.compilerInstance.toComponent(componentName, structuredClone(this.compilerInstance.library[componentName].components));
     }
 
     getComponentNamesByType (type) {
@@ -85,7 +76,7 @@ export default class CompilerTask {
         let str = "";
 
         this.getComponentsToCompile().forEach(rawComponentName => {
-            let parsed = this.parseComponentKey(rawComponentName);
+            let parsed = stringUtils.parseComponentKey(rawComponentName);
             str += `this.instanceCompiled["${rawComponentName}"] = this.compileForThis("${parsed.type}");${stringUtils.newLine}`
         })
 
@@ -97,7 +88,7 @@ export default class CompilerTask {
     }
 
     componentUsesInstanceCompilation(component) {
-        let parsed = this.parseComponentKey(component);
+        let parsed = stringUtils.parseComponentKey(component);
         let definition = this.compilerInstance.library[parsed.type];
         return definition?.externals || definition?.instanceCompilations;
     }
@@ -109,7 +100,7 @@ export default class CompilerTask {
     }
 
     buildCallStatement (rawComponentName) {
-        const componentInfo = this.parseComponentKey(rawComponentName);
+        const componentInfo = stringUtils.parseComponentKey(rawComponentName);
         const inputs = this.components[rawComponentName].inputs;
         const returnArrayStr = stringUtils.strArray(this.getComponentReturnArr(componentInfo.type, componentInfo.index));
         const callingComponentUsesExternals = this.componentUsesInstanceCompilation(componentInfo.type);
@@ -132,7 +123,7 @@ export default class CompilerTask {
         let str = "";
 
         for (let rawComponentName in this.components) {
-            let componentInfo = this.parseComponentKey(rawComponentName);
+            let componentInfo = stringUtils.parseComponentKey(rawComponentName);
             
             if (componentInfo.type !== "input" && componentInfo.type !== "output" && componentInfo.type !== "external") {
                 str += this.buildCallStatement(rawComponentName);

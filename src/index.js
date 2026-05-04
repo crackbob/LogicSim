@@ -1,26 +1,14 @@
 import Compiler from "./Compiler/Compiler";
 import presets from "./presets.json"
+import NodeElement from "./ui/NodeElement";
 import mathUtils from "./utils/mathUtils";
+import Workspace from "./Workspace";
 
-let library = {
-    "not": {
-        "inputs": 1,
-        "outputs": 1,
-        "execute": (i) => [Number(!i)]
-    },
-
-    "and": {
-        "inputs": 2,
-        "outputs": 1,
-        "execute": (a, b) => [a && Number(a == b)]
-    },
-}
-
-let compilerInstance = new Compiler(library);
-
-Object.keys(presets).forEach(presetName => {
-    library[presetName] = compilerInstance.toComponent(presets[presetName])
-})
-
-window.compilerInstance = compilerInstance;
 window.mathUtils = mathUtils;
+
+let workspace = new Workspace(document.getElementById("root"));
+
+window.workspace = workspace;
+window.compiler = workspace.compiler;
+
+workspace.create("and")

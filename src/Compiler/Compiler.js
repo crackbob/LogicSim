@@ -11,11 +11,12 @@ export default class Compiler {
         return this.task.compile();
     }
 
-    toComponent (components) {
+    toComponent (name, components) {
         const task = new CompilerTask(this, components);
         this.tasks.push(task);
 
         return {
+            name: name,
             inputs: task.getComponentsByType("input").length,
             outputs: task.getTotalOutputs(),
             externals: task.getComponentsByType("external").length,
