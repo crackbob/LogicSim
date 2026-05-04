@@ -8,6 +8,7 @@ export default class Compiler {
 
     compile (components) {
         this.task = new CompilerTask(this, components);
+        this.tasks.push(this.task);
         return this.task.compile();
     }
 

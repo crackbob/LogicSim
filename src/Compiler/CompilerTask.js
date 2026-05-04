@@ -11,6 +11,8 @@ export default class CompilerTask {
             compileForThis: this.compileForComponent.bind(this),
             componentState: {}
         };
+
+        this.ioNames = ["input", "output", "inputDigit4", "external"]
     }
 
     callFromComponent (rawComponentName, name, ...inputs) {
@@ -39,7 +41,19 @@ export default class CompilerTask {
     }
 
     buildFunctionArguments () {
-        return this.getComponentNamesByType("input");
+        const inputs = this.getComponentNamesByType("input");
+        const returnValue = [];
+
+        inputs.forEach(rawInputName => {
+            const parsed = stringUtils.parseComponentKey(rawInputName);
+            const definition = this.compilerInstance.library[parsed.type];
+            
+            for (let i = 0; i < definition.outputs; i++) {
+                returnValue.push(`${parsed.type}_${parsed.index}_${i}`);
+            }
+        })
+
+        return returnValue;
     }
 
     buildFunctionReturns () {
@@ -125,7 +139,7 @@ export default class CompilerTask {
         for (let rawComponentName in this.components) {
             let componentInfo = stringUtils.parseComponentKey(rawComponentName);
             
-            if (componentInfo.type !== "input" && componentInfo.type !== "output" && componentInfo.type !== "external") {
+            if (!this.ioNames.includes(componentInfo.type)) {
                 str += this.buildCallStatement(rawComponentName);
             }
 

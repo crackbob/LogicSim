@@ -3,6 +3,8 @@ import NodeElement from "./ui/NodeElement";
 import InputNodeElement from "./ui/InputNodeElement";
 import ContextMenuElement from "./ui/ContextMenuElement";
 import presets from "./presets.json"
+import InputDigit4NodeElement from "./ui/InputDigit4NodeElement";
+import stringUtils from "./utils/stringUtils";
 
 export default class Workspace {
     constructor (root) {
@@ -11,7 +13,12 @@ export default class Workspace {
 
         this.currentComponentName = "test";
 
-        this.ioDefinitions = {
+        this.extendedComponents = {
+            "inputDigit4": InputDigit4NodeElement,
+            "input": InputNodeElement
+        }
+
+        this.compiler = new Compiler({
             input: {
                 name: "input",
                 inputs: 0,
@@ -21,10 +28,12 @@ export default class Workspace {
                 name: "output",
                 inputs: 1,
                 outputs: 0
-            }
-        };
-
-        this.compiler = new Compiler({
+            },
+            inputDigit4: {
+                name: "inputDigit4",
+                inputs: 0,
+                outputs: 4
+            },
             "not": {
                 "name": "not",
                 "inputs": 1,
@@ -66,22 +75,31 @@ export default class Workspace {
         return this.nodes.filter(node => node.name == name);
     }
 
+    getAllInputIds () {
+        const nodeIds = workspace.nodes.map(node => node.id);
+        const lib = this.compiler.library;
+        return nodeIds.filter(compId => {
+            let parsed = stringUtils.parseComponentKey(compId);
+            return !lib[parsed.type].inputs && lib[parsed.type].outputs
+        })
+    }
+
     getNodeDefinition (name) {
-        return this.ioDefinitions[name] || this.compiler.library[name];
+        return this.compiler.library[name];
     }
 
     getAvailableComponentNames () {
         return [
-            ...Object.keys(this.ioDefinitions),
             ...Object.keys(this.compiler.library)
         ];
     }
 
     createIo(type, internalState) {
         const nextId = this.getNodesByType(type).length;
-        const definition = this.ioDefinitions[type];
+        const definition = this.compiler.library[type];
 
-        const NodeClass = type === "input" ? InputNodeElement : NodeElement;
+        const NodeClass = this.extendedComponents[type] || NodeElement;
+
         const instance = new NodeClass(this, `${type}_${nextId}`, definition, internalState);
         instance.position.x = 100 + (nextId * 160);
         instance.dom.element.style.left = instance.position.x + "px";
@@ -204,7 +222,7 @@ export default class Workspace {
             const fromNode = conn.from.node || 0;
             let indexStr = `_${conn.from.output}`;
 
-            if (fromNode.startsWith("input") || fromNode.startsWith("output")) {
+            if (fromNode.startsWith("output")) {
                 indexStr = "";
             }
 
@@ -219,24 +237,39 @@ export default class Workspace {
     }
 
     compile () {
-        return this.compiler.compile(this.export());
+        return this.compiler.toComponent(this.currentComponentName, this.export());
+    }
+
+    getNodeById (id) {
+        return this.nodes.find(node => node.id == id);
     }
 
     simulate () {
         const library = this.compiler.library
-        let inputs = workspace.getNodesByType("input");
+        let inputIds = this.getAllInputIds();
         let outputs = workspace.getNodesByType("output");
-        let inputValues = inputs.map(n => n.internalState.outputs[0]);
+        let inputValues = inputIds.map(id => this.getNodeById(id).internalState.outputs).flat();
 
         if (this.dirty || !library?.[this.currentComponentName]) {
             library[this.currentComponentName] = this.compile();
             this.dirty = false;
         }
 
-        let outputValues = library[this.currentComponentName](...inputValues);
+        let outputValues = library[this.currentComponentName].execute(...inputValues);
 
         outputValues.forEach((output, index) => {
             outputs[index].setPowered(output);
+        })
+
+        this.nodes.forEach(node => {
+            let state = this.compiler.library.test.scope.componentState[node.id];
+
+            if (state) {
+                node.internalState.inputs = state.inputs;
+                node.internalState.outputs = state.outputs;
+            }
+
+            node.updateVisuals();
         })
 
         console.log(inputValues, outputValues);

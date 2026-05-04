@@ -88,11 +88,15 @@ body {
     left: 100px;
     top: 100px;
     width: 150px;
-    height: 70px;
 
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 12px;
     align-items: center;
+    justify-items: center;
+    padding: 12px 0;
+    overflow: visible;
+    z-index: 1;
 
     user-select: none;
 
@@ -144,11 +148,35 @@ body {
     letter-spacing: 0.06em;
 }
 
-.input-port {
-    position: absolute;
-    left: -5px;
-    top: 50%;
-    transform: translateY(-50%);
+.ports {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    z-index: 1;
+}
+
+.ports.left {
+    grid-column: 1;
+    margin-left: -5px;
+}
+
+.ports.right {
+    grid-column: 3;
+    margin-right: -5px;
+}
+
+.component-content {
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.port {
     width: 10px;
     height: 10px;
     background: rgb(255, 255, 255);
@@ -156,20 +184,21 @@ body {
     cursor: pointer;
 }
 
-.output-port {
-    position: absolute;
-    right: -5px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10px;
-    height: 10px;
-    background: rgb(255, 255, 255);
-    border-radius: 50%;
-    cursor: pointer;
+.port.powered {
+    background-color: var(--power-color);
 }
 
 .component-label {
     text-transform: uppercase;
     font-weight: 600;
     color: var(--component-text-color);
+    grid-column: 2;
+    justify-self: center;
+}
+
+.component-label.input {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    outline: none;
+    scale: 2;
 }

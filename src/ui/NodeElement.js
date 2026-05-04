@@ -50,23 +50,34 @@ export default class NodeElement {
         this.inputs = [];
         this.outputs = [];
 
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "ports left";
+        this.dom.element.appendChild(inputContainer);
+
+        const contentContainer = document.createElement("div");
+        contentContainer.className = "component-content";
+        this.dom.element.appendChild(contentContainer);
+        this.dom.content = contentContainer;
+
+        const outputContainer = document.createElement("div");
+        outputContainer.className = "ports right";
+        this.dom.element.appendChild(outputContainer);
+
         for (let i = 0; i < this.definition.inputs; i++) {
             const port = document.createElement("div");
-            port.className = "input-port";
+            port.className = "port left";
             port.dataset.index = i;
-            port.style.top = `${((i + 1) / (this.definition.inputs + 1)) * 100}%`;
             port.addEventListener("mouseup", () => this.workspace.onInputPortClick(this, i));
-            this.dom.element.appendChild(port);
+            inputContainer.appendChild(port);
             this.inputs.push(port);
         }
 
         for (let i = 0; i < this.definition.outputs; i++) {
             const port = document.createElement("div");
-            port.className = "output-port";
+            port.className = "port right";
             port.dataset.index = i;
-            port.style.top = `${((i + 1) / (this.definition.outputs + 1)) * 100}%`;
             port.addEventListener("mousedown", () => this.workspace.onOutputPortClick(this, i));
-            this.dom.element.appendChild(port);
+            outputContainer.appendChild(port);
             this.outputs.push(port);
         }
 
@@ -76,7 +87,7 @@ export default class NodeElement {
     createLabel (text) {
         const label = document.createElement("div");
         label.className = "component-label";
-        this.dom.element.appendChild(label);
+        this.dom.content.appendChild(label);
 
         label.innerText = text;
 
@@ -109,6 +120,16 @@ export default class NodeElement {
         document.addEventListener("mouseup", () => {
             this.dragging = false;
         });
+    }
+
+    updateVisuals () {
+        this.outputs.forEach((output, i) => {
+            output.classList.toggle("powered", this.internalState?.outputs[i]);
+        })
+
+        this.inputs.forEach((input, i) => {
+            input.classList.toggle("powered", this.internalState?.inputs?.[i]);
+        })
     }
 
     setPowered(state) {

@@ -36,7 +36,7 @@ export default class InputNodeElement extends NodeElement {
         switchWrapper.appendChild(switchTrack);
         switchWrapper.appendChild(switchLabel);
 
-        this.dom.element.appendChild(switchWrapper);
+        this.dom.content.appendChild(switchWrapper);
         this.dom.switch = switchWrapper;
     }
 

@@ -1,9 +1,9 @@
 {
     "nand": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "and_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "not_0": {
             "inputs": ["and_0_0"]
@@ -14,13 +14,13 @@
     },
 
     "or": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "not_0": {
-            "inputs": ["input_0"]
+            "inputs": ["input_0_0"]
         },
         "not_1": {
-            "inputs": ["input_1"]
+            "inputs": ["input_1_0"]
         },
         "nand_0": {
             "inputs": ["not_0_0", "not_1_0"]
@@ -31,10 +31,10 @@
     },
 
     "nor": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "or_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "not_0": {
             "inputs": ["or_0_0"]
@@ -45,13 +45,13 @@
     },
 
     "xor": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "or_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "nand_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "and_0": {
             "inputs": ["or_0_0", "nand_0_0"]
@@ -62,20 +62,20 @@
     },
 
     "adder": {
-        "input_0": {},
-        "input_1": {},
-        "input_2": {},
+        "input_0_0": {},
+        "input_1_0": {},
+        "input_2_0": {},
         "xor_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "and_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "xor_1": {
-            "inputs": ["xor_0_0", "input_2"]
+            "inputs": ["xor_0_0", "input_2_0"]
         },
         "and_1": {
-            "inputs": ["xor_0_0", "input_2"]
+            "inputs": ["xor_0_0", "input_2_0"]
         },
         "or_0": {
             "inputs": ["and_0_0", "and_1_0"]
@@ -86,25 +86,25 @@
     },
 
     "adder4": {
-        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
-        "input_4": {}, "input_5": {}, "input_6": {}, "input_7": {},
+        "input_0_0": {}, "input_1_0": {}, "input_2_0": {}, "input_3_0": {},
+        "input_4_0": {}, "input_5_0": {}, "input_6_0": {}, "input_7_0": {},
 
-        "input_8": {},
+        "input_8_0": {},
 
         "adder_0": {
-            "inputs": ["input_3", "input_7", "input_8"]
+            "inputs": ["input_3_0", "input_7_0", "input_8_0"]
         },
 
         "adder_1": {
-            "inputs": ["input_2", "input_6", "adder_0_1"]
+            "inputs": ["input_2_0", "input_6_0", "adder_0_1"]
         },
 
         "adder_2": {
-            "inputs": ["input_1", "input_5", "adder_1_1"]
+            "inputs": ["input_1_0", "input_5_0", "adder_1_1"]
         },
 
         "adder_3": {
-            "inputs": ["input_0", "input_4", "adder_2_1"]
+            "inputs": ["input_0_0", "input_4_0", "adder_2_1"]
         },
 
         "output_0": {
@@ -119,48 +119,48 @@
     },
 
     "alu": {
-        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
-        "input_4": {}, "input_5": {}, "input_6": {}, "input_7": {},
+        "input_0_0": {}, "input_1_0": {}, "input_2_0": {}, "input_3_0": {},
+        "input_4_0": {}, "input_5_0": {}, "input_6_0": {}, "input_7_0": {},
 
-        "input_8": {},
+        "input_8_0": {},
 
 
         "xor_0": {
-            "inputs": ["input_4", "input_8"]
+            "inputs": ["input_4_0", "input_8_0"]
         },
 
         "xor_1": {
-            "inputs": ["input_5", "input_8"]
+            "inputs": ["input_5_0", "input_8_0"]
         },
 
         "xor_2": {
-            "inputs": ["input_6", "input_8"]
+            "inputs": ["input_6_0", "input_8_0"]
         },
 
         "xor_3": {
-            "inputs": ["input_7", "input_8"]
+            "inputs": ["input_7_0", "input_8_0"]
         },
 
 
         "adder4_0": {
-            "inputs": ["input_0", "input_1", "input_2", "input_3", "xor_0_0", "xor_1_0", "xor_2_0", "xor_3_0", "input_8"]
+            "inputs": ["input_0_0", "input_1_0", "input_2_0", "input_3_0", "xor_0_0", "xor_1_0", "xor_2_0", "xor_3_0", "input_8_0"]
         },
 
 
         "not_0": {
-            "inputs": ["adder4_0_0", "input_8"]
+            "inputs": ["adder4_0_0", "input_8_0"]
         },
 
         "not_1": {
-            "inputs": ["adder4_0_1", "input_8"]
+            "inputs": ["adder4_0_1", "input_8_0"]
         },
 
         "not_2": {
-            "inputs": ["adder4_0_2", "input_8"]
+            "inputs": ["adder4_0_2", "input_8_0"]
         },
 
         "not_3": {
-            "inputs": ["adder4_0_3", "input_8"]
+            "inputs": ["adder4_0_3", "input_8_0"]
         },
 
 
@@ -196,13 +196,13 @@
 
     "srLatch": {
         "external_0": 0,
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "or_0": {
-            "inputs": ["external_0", "input_0"]
+            "inputs": ["external_0", "input_0_0"]
         },
         "not_0": {
-            "inputs": ["input_1"]
+            "inputs": ["input_1_0"]
         },
         "and_0": {
             "inputs": ["or_0_0", "not_0_0"],
@@ -214,16 +214,16 @@
     },
 
     "dLatch": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
         "and_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
         "not_0": {
-            "inputs": ["input_0"]
+            "inputs": ["input_0_0"]
         },
         "and_1": {
-            "inputs": ["input_1", "not_0_0"]
+            "inputs": ["input_1_0", "not_0_0"]
         },
         "srLatch_0": {
             "inputs": ["and_0_0", "and_1_0"]
@@ -234,19 +234,19 @@
     },
 
     "dFlipFlop": {
-        "input_0": {},
-        "input_1": {},
+        "input_0_0": {},
+        "input_1_0": {},
 
         
         "not_0": {
-            "inputs": ["input_1"]
+            "inputs": ["input_1_0"]
         },
         "dLatch_0": {
-            "inputs": ["input_0", "not_0_0"]
+            "inputs": ["input_0_0", "not_0_0"]
         },
         
         "dLatch_1": {
-            "inputs": ["dLatch_0_0", "input_1"]
+            "inputs": ["dLatch_0_0", "input_1_0"]
         },
 
         "output_0": {
@@ -255,18 +255,18 @@
     },
 
     "register": {
-        "input_0": {},
-        "input_1": {},
-        "input_2": {},
+        "input_0_0": {},
+        "input_1_0": {},
+        "input_2_0": {},
 
         "external_0": 0,
         
         "not_0": {
-            "inputs": ["input_1"]
+            "inputs": ["input_1_0"]
         },
         
         "and_0": {
-            "inputs": ["input_0", "input_1"]
+            "inputs": ["input_0_0", "input_1_0"]
         },
 
         "and_1": {
@@ -278,7 +278,7 @@
         },
         
         "dFlipFlop_0": {
-            "inputs": ["or_1_0", "input_2"],
+            "inputs": ["or_1_0", "input_2_0"],
             "outputs": ["external_0"]
         },
 
@@ -288,23 +288,23 @@
     },
 
     "register4": {
-        "input_0": {}, "input_1": {}, "input_2": {}, "input_3": {},
-        "input_4": {}, "input_5": {},
+        "input_0_0": {}, "input_1_0": {}, "input_2_0": {}, "input_3_0": {},
+        "input_4_0": {}, "input_5_0": {},
 
         "register_0": {
-            "inputs": ["input_0", "input_4", "input_5"]
+            "inputs": ["input_0_0", "input_4_0", "input_5_0"]
         },
 
         "register_1": {
-            "inputs": ["input_1", "input_4", "input_5"]
+            "inputs": ["input_1_0", "input_4_0", "input_5_0"]
         },
 
         "register_2": {
-            "inputs": ["input_2", "input_4", "input_5"]
+            "inputs": ["input_2_0", "input_4_0", "input_5_0"]
         },
 
         "register_3": {
-            "inputs": ["input_3", "input_4", "input_5"]
+            "inputs": ["input_3_0", "input_4_0", "input_5_0"]
         },
 
         "output_0": {
