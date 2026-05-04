@@ -22,8 +22,9 @@ const addButton = (label, onClick) => {
 addButton("INPUT", () => workspace.createIo("input"));
 addButton("INPUTDIGIT4", () => workspace.createIo("inputDigit4"));
 addButton("OUTPUT", () => workspace.createIo("output"));
+addButton("OUTPUTDIGIT4", () => workspace.createIo("outputDigit4"));
 
 workspace.getAvailableComponentNames().forEach(name => {
-    if (name === "input" || name === "output" || name === "inputDigit4") return;
+    if (name == "input" || name == "output" || name == "inputDigit4" || name == "outputDigit4") return;
     addButton(`${name.toUpperCase()}`, () => workspace.create(name));
 });

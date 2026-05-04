@@ -12,6 +12,7 @@ export default class NodeElement {
         } else {
             this.internalState = { 
                 outputs: Array(definition.outputs).fill(0),
+                inputs: Array(definition.inputs).fill(0),
             };
         }
 
@@ -130,9 +131,7 @@ export default class NodeElement {
         this.inputs.forEach((input, i) => {
             input.classList.toggle("powered", this.internalState?.inputs?.[i]);
         })
-    }
 
-    setPowered(state) {
-        this.dom.element.classList.toggle("powered", state);
+        this.dom.element.classList.toggle("powered", this.internalState.outputs.every(v => v == 1));
     }
 }

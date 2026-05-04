@@ -72,10 +72,14 @@ body {
 
 .connection-line {
     pointer-events: stroke;
-    stroke: rgb(5, 5, 5);
+    stroke: rgb(100 100 100);
     stroke-width: 4;
     stroke-linecap: round;
     opacity: 0.9;
+}
+
+.connection-line.powered {
+    stroke: rgb(255, 0, 0);
 }
 
 .component {
@@ -107,6 +111,10 @@ body {
 
 .component.powered {
     outline: 2px solid var(--power-color);
+}
+
+.component:hover {
+    filter: brightness(1.1);
 }
 
 .input-switch {
@@ -179,13 +187,17 @@ body {
 .port {
     width: 10px;
     height: 10px;
-    background: rgb(255, 255, 255);
+    background: rgb(100, 100, 100);
     border-radius: 50%;
     cursor: pointer;
 }
 
 .port.powered {
     background-color: var(--power-color);
+}
+
+.port:hover {
+    filter: brightness(1.5);
 }
 
 .component-label {

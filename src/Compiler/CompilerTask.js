@@ -12,7 +12,7 @@ export default class CompilerTask {
             componentState: {}
         };
 
-        this.ioNames = ["input", "output", "inputDigit4", "external"]
+        this.ioNames = ["input", "output", "inputDigit4", "external", "outputDigit4"]
     }
 
     callFromComponent (rawComponentName, name, ...inputs) {

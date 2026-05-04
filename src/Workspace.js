@@ -5,6 +5,7 @@ import ContextMenuElement from "./ui/ContextMenuElement";
 import presets from "./presets.json"
 import InputDigit4NodeElement from "./ui/InputDigit4NodeElement";
 import stringUtils from "./utils/stringUtils";
+import OutputDigit4NodeElement from "./ui/OutputDigit4NodeElement";
 
 export default class Workspace {
     constructor (root) {
@@ -15,24 +16,30 @@ export default class Workspace {
 
         this.extendedComponents = {
             "inputDigit4": InputDigit4NodeElement,
-            "input": InputNodeElement
+            "input": InputNodeElement,
+            "outputDigit4": OutputDigit4NodeElement
         }
 
         this.compiler = new Compiler({
-            input: {
+            "input": {
                 name: "input",
                 inputs: 0,
                 outputs: 1
             },
-            output: {
+            "output": {
                 name: "output",
                 inputs: 1,
                 outputs: 0
             },
-            inputDigit4: {
+            "inputDigit4": {
                 name: "inputDigit4",
                 inputs: 0,
                 outputs: 4
+            },
+            "outputDigit4": {
+                name: "outputDigit4",
+                inputs: 4,
+                outputs: 0
             },
             "not": {
                 "name": "not",
@@ -81,6 +88,15 @@ export default class Workspace {
         return nodeIds.filter(compId => {
             let parsed = stringUtils.parseComponentKey(compId);
             return !lib[parsed.type].inputs && lib[parsed.type].outputs
+        })
+    }
+
+    getAllOutputIds () {
+        const nodeIds = workspace.nodes.map(node => node.id);
+        const lib = this.compiler.library;
+        return nodeIds.filter(compId => {
+            let parsed = stringUtils.parseComponentKey(compId);
+            return lib[parsed.type].inputs && !lib[parsed.type].outputs
         })
     }
 
@@ -137,6 +153,8 @@ export default class Workspace {
             this.drawConnection(this.connectingFrom, { node, inputIndex });
             this.connectingFrom = null;
         }
+
+        this.dirty = true;
     }
 
     drawConnection(from, to, connectionIndex = 0) {
@@ -156,6 +174,9 @@ export default class Workspace {
         line.setAttribute("y2", y2);
         line.setAttribute("class", "connection-line");
 
+        const isPowered = from.node.internalState.outputs[from.outputIndex];
+        line.classList.toggle("powered", isPowered);
+
         line.addEventListener('contextmenu', this.onRightClickLine.bind(this))
         this.svg.appendChild(line);
     }
@@ -174,6 +195,7 @@ export default class Workspace {
 
     updateConnections() {
         this.svg.innerHTML = '';
+        this.lines = [];
         this.connections.forEach((conn, index) => {
             const fromNode = this.nodes.find(n => n.id === conn.from.node);
             const toNode = this.nodes.find(n => n.id === conn.to.node);
@@ -209,8 +231,8 @@ export default class Workspace {
 
         this.nodes.forEach(node => {
             if (node.name === "input") {
-                components[node.id] = { inputs: [] };
-            } else if (node.name === "output") {
+                components[node.id] = { inputs: [], outputs: [] };
+            } else if (node.name.startsWith("output")) {
                 components[node.id] = { outputs: new Array(node.definition.inputs).fill(0) };
             } else {
                 components[node.id] = { inputs: new Array(node.definition.inputs).fill(0) };
@@ -244,10 +266,36 @@ export default class Workspace {
         return this.nodes.find(node => node.id == id);
     }
 
+    getInputsToValues () {
+        let outputIds = this.getAllInputIds();
+
+        return Object.fromEntries(outputIds.map(id => {
+            let node = this.getNodeById(id);
+            return [node.id, node.internalState.outputs];
+        }))
+    }
+
+    buildOutputMap() {
+        const outputNodes = this.getAllOutputIds().map(id => this.getNodeById(id));
+
+        const map = [];
+        let flatIndex = 0;
+
+        for (const node of outputNodes) {
+            const inputCount = node.definition.inputs;
+
+            for (let i = 0; i < inputCount; i++) {
+                map[flatIndex++] = { node, portIndex: i };
+            }
+        }
+
+        return map;
+    }
+
     simulate () {
         const library = this.compiler.library
         let inputIds = this.getAllInputIds();
-        let outputs = workspace.getNodesByType("output");
+        let outputs = this.getAllOutputIds().map(id => this.getNodeById(id));
         let inputValues = inputIds.map(id => this.getNodeById(id).internalState.outputs).flat();
 
         if (this.dirty || !library?.[this.currentComponentName]) {
@@ -257,9 +305,16 @@ export default class Workspace {
 
         let outputValues = library[this.currentComponentName].execute(...inputValues);
 
-        outputValues.forEach((output, index) => {
-            outputs[index].setPowered(output);
-        })
+        const outputMap = this.buildOutputMap();
+
+        outputValues.forEach((value, flatIndex) => {
+            const entry = outputMap[flatIndex];
+            if (!entry) return;
+
+            entry.node.internalState.inputs[entry.portIndex] = value;
+            entry.node.internalState.outputs[entry.portIndex] = value;
+            entry.node.updateVisuals();
+        });
 
         this.nodes.forEach(node => {
             let state = this.compiler.library.test.scope.componentState[node.id];
@@ -271,6 +326,8 @@ export default class Workspace {
 
             node.updateVisuals();
         })
+
+        this.updateConnections();
 
         console.log(inputValues, outputValues);
     }
