@@ -133,19 +133,69 @@ export default class CompilerTask {
         return `${stringUtils.indent}${keyword}${returnArrayStr} = this.call("${rawComponentName}", "${nameToCall}", ${stringUtils.strArray(inputs, false)}); ${stringUtils.newLine}`;
     }
 
+    resolveOwner (signalName)  {
+        if (typeof signalName !== "string") return null;
+
+        const parts = signalName.split("_");
+        parts.pop();
+
+        const componentName = parts.join("_");
+        return this.components[componentName] ? componentName : null;
+    }
+
+    getExecutionOrder() {
+        const visited = new Set();
+        const visiting = new Set();
+        const order = [];
+
+        const visit = (name) => {
+            if (visited.has(name)) return;
+            if (visiting.has(name)) {
+                console.log("cycle " + name);
+            }
+
+            visiting.add(name);
+
+            const component = this.components[name];
+            const inputs = component?.inputs || [];
+
+            for (let input of inputs) {
+                const dep = this.resolveOwner(input);
+                if (dep) {
+                    visit(dep);
+                }
+            }
+
+            visiting.delete(name);
+            visited.add(name);
+            order.push(name);
+        };
+
+        for (let name in this.components) {
+            const parsed = stringUtils.parseComponentKey(name);
+
+            if (!this.ioNames.includes(parsed.type)) {
+                visit(name);
+            }
+        }
+
+        return order;
+    }
+
     buildFunctionBody () {
         let str = "";
 
-        for (let rawComponentName in this.components) {
+        const order = this.getExecutionOrder();
+
+        for (let rawComponentName of order) {
             let componentInfo = stringUtils.parseComponentKey(rawComponentName);
-            
+
             if (!this.ioNames.includes(componentInfo.type)) {
                 str += this.buildCallStatement(rawComponentName);
             }
-
         }
 
-        str += `${stringUtils.indent}return ${stringUtils.strArray(this.buildFunctionReturns())}; ${stringUtils.newLine}`
+        str += `${stringUtils.indent}return ${stringUtils.strArray(this.buildFunctionReturns())}; ${stringUtils.newLine}`;
 
         return str;
     }

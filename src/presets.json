@@ -310,5 +310,41 @@
         "output_0": {
             "outputs": ["register_0_0", "register_1_0", "register_2_0", "register_3_0"]
         }
+    },
+
+    "decoder2": {
+        "input_0": {},
+        "input_1": {},
+        
+        "output_0": {
+            "outputs": ["and_3_0"]
+        },
+        "output_1": {
+            "outputs": ["and_2_0"]
+        },
+        "output_2": {
+            "outputs": ["and_1_0"]
+        },
+        "output_3": {
+            "outputs": ["and_0_0"]
+        },
+        "not_0": {
+            "inputs": ["input_0_0"]
+        },
+        "not_1": {
+            "inputs": ["input_1_0"]
+        },
+        "and_0": {
+            "inputs": ["not_0_0", "not_1_0"]
+        },
+        "and_1": {
+            "inputs": ["input_1_0", "not_0_0"]
+        },
+        "and_2": {
+            "inputs": ["input_0_0", "not_1_0"]
+        },
+        "and_3": {
+            "inputs": ["input_0_0", "input_1_0"]
+        }
     }
 }

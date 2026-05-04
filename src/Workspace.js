@@ -136,6 +136,7 @@ export default class Workspace {
 
         this.nodes.push(instance);
         this.dirty = true;
+        this.simulate();
 
         return instance;
     }
@@ -155,6 +156,7 @@ export default class Workspace {
         }
 
         this.dirty = true;
+        this.simulate();
     }
 
     drawConnection(from, to, connectionIndex = 0) {
@@ -213,6 +215,7 @@ export default class Workspace {
         this.connections = this.connections.filter(conn => conn.from.node !== nodeId && conn.to.node !== nodeId);
         this.updateConnections();
         this.dirty = true;
+        this.simulate();
     }
 
     getConnectionByElement (element) {
@@ -224,6 +227,7 @@ export default class Workspace {
         this.connections.splice(index, 1);
         this.updateConnections();
         this.dirty = true;
+        this.simulate();
     }
 
     export () {
