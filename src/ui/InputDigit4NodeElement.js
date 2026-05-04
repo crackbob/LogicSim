@@ -14,7 +14,7 @@ export default class InputDigit4NodeElement extends NodeElement {
 
     createLabel (text) {
         const label = document.createElement("div");
-        label.className = "component-label input";
+        label.className = "component-label digit";
         this.dom.content.appendChild(label);
 
         label.innerText = 0;

@@ -346,5 +346,27 @@
         "and_3": {
             "inputs": ["input_0_0", "input_1_0"]
         }
+    },
+    "mem1": {
+        "input_0": {},
+        "input_1": {},
+        "input_2": {},
+        "input_3": {},
+
+        "and_0": {
+            "inputs": ["input_2_0", "input_3_0"]
+        },
+        "and_1": {
+            "inputs": ["input_1_0", "and_0_0"]
+        },
+        "dLatch_0": {
+            "inputs": ["input_0_0",  "and_1_0"]
+        },
+        "tribuf_0": {
+            "inputs": ["dLatch_0_0", "and_0_0"]
+        },
+        "output_0": {
+            "outputs": ["tribuf_0_0"]
+        }
     }
 }

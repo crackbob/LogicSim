@@ -82,6 +82,17 @@ body {
     stroke: rgb(255, 0, 0);
 }
 
+.bend-point {
+    fill: rgb(0, 0, 0, 0.5);
+    stroke-width: 1;
+    cursor: move;
+    pointer-events: auto;
+}
+
+.bend-point:hover {
+    fill: rgb(150, 150, 150);
+}
+
 .component {
     --component-primary-color: rgb(50, 50, 50);
     --power-color: rgb(255, 0, 0);
@@ -208,7 +219,7 @@ body {
     justify-self: center;
 }
 
-.component-label.input {
+.component-label.digit {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 10px;
     outline: none;

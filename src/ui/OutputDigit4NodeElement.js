@@ -14,6 +14,7 @@ export default class OutputDigit4NodeElement extends NodeElement {
 
     createLabel (text) {
         let label = super.createLabel(text);
+        this.dom.label.className = "component-label digit"
         this.dom.label.innerText = 0;
         return label;
     }

@@ -40,7 +40,7 @@ export default class NodeElement {
 
         this.dom.element.addEventListener('contextmenu', (event) => {
             event.preventDefault();
-            this.workspace.contextMenu.show([
+            this.workspace.connectionCanvas.contextMenu.show([
                 {
                     label: `Delete ${this.definition.name.toUpperCase()}`,
                     onClick: () => this.workspace.deleteNode(this.id)
@@ -68,7 +68,15 @@ export default class NodeElement {
             const port = document.createElement("div");
             port.className = "port left";
             port.dataset.index = i;
-            port.addEventListener("mouseup", () => this.workspace.onInputPortClick(this, i));
+            port.addEventListener("mousedown", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
+            port.addEventListener("mouseup", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.workspace.onInputPortClick(this, i);
+            });
             inputContainer.appendChild(port);
             this.inputs.push(port);
         }
@@ -77,7 +85,11 @@ export default class NodeElement {
             const port = document.createElement("div");
             port.className = "port right";
             port.dataset.index = i;
-            port.addEventListener("mousedown", () => this.workspace.onOutputPortClick(this, i));
+            port.addEventListener("mousedown", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.workspace.onOutputPortClick(this, i);
+            });
             outputContainer.appendChild(port);
             this.outputs.push(port);
         }
@@ -100,6 +112,7 @@ export default class NodeElement {
         const el = this.dom.element;
 
         el.addEventListener("mousedown", (e) => {
+            if (e.target.closest('.port')) return;
             this.dragging = true;
 
             this.offset.x = e.clientX - this.position.x;

@@ -6,6 +6,7 @@ import presets from "./presets.json"
 import InputDigit4NodeElement from "./ui/InputDigit4NodeElement";
 import stringUtils from "./utils/stringUtils";
 import OutputDigit4NodeElement from "./ui/OutputDigit4NodeElement";
+import ConnectionCanvas from "./ui/ConnectionCanvas";
 
 export default class Workspace {
     constructor (root) {
@@ -22,25 +23,29 @@ export default class Workspace {
 
         this.compiler = new Compiler({
             "input": {
-                name: "input",
-                inputs: 0,
-                outputs: 1
+                "name": "input",
+                "inputs": 0,
+                "outputs": 1
             },
+
             "output": {
-                name: "output",
-                inputs: 1,
-                outputs: 0
+                "name": "output",
+                "inputs": 1,
+                "outputs": 0
             },
+
             "inputDigit4": {
-                name: "inputDigit4",
-                inputs: 0,
-                outputs: 4
+                "name": "inputDigit4",
+                "inputs": 0,
+                "outputs": 4
             },
+
             "outputDigit4": {
-                name: "outputDigit4",
-                inputs: 4,
-                outputs: 0
+                "name": "outputDigit4",
+                "inputs": 4,
+                "outputs": 0
             },
+
             "not": {
                 "name": "not",
                 "inputs": 1,
@@ -53,6 +58,15 @@ export default class Workspace {
                 "inputs": 2,
                 "outputs": 1,
                 "execute": (a, b) => [a && Number(a == b)]
+            },
+            
+            "tribuf": {
+                "name": "tribuf",
+                "inputs": 2,
+                "outputs": 1,
+                "execute": (input, enable) => {
+                    return [enable ? Number(!!input) : 0];
+                }
             }
         });
 
@@ -60,16 +74,10 @@ export default class Workspace {
 
         this.connections = [];
         this.connectingFrom = null;
+        this.connectionBendPoints = [];
         this.dirty = false;
 
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute("class", "connections");
-        this.root.appendChild(svg);
-        this.svg = svg;
-
-        this.contextMenu = new ContextMenuElement();
-
-        this.root.addEventListener('contextmenu', (event) => event.preventDefault());
+        this.connectionCanvas = new ConnectionCanvas(root, this);
     }
 
     loadPresets () {
@@ -143,15 +151,18 @@ export default class Workspace {
 
     onOutputPortClick(node, outputIndex) {
         this.connectingFrom = { node, outputIndex };
+        this.connectionBendPoints = [];
+        this.connectionCanvas.createTempConnection();
     }
 
     onInputPortClick(node, inputIndex) {
         if (this.connectingFrom) {
             this.connections.push({
                 from: { node: this.connectingFrom.node.id, output: this.connectingFrom.outputIndex },
-                to: { node: node.id, input: inputIndex }
+                to: { node: node.id, input: inputIndex },
+                bends: [...this.connectionBendPoints]
             });
-            this.drawConnection(this.connectingFrom, { node, inputIndex });
+            this.connectionCanvas.clearTemporaryConnection();
             this.connectingFrom = null;
         }
 
@@ -159,50 +170,13 @@ export default class Workspace {
         this.simulate();
     }
 
-    drawConnection(from, to, connectionIndex = 0) {
-        const fromPort = from.node.outputs[from.outputIndex];
-        const toPort = to.node.inputs[to.inputIndex];
-        const fromRect = fromPort.getBoundingClientRect();
-        const toRect = toPort.getBoundingClientRect();
-        const rootRect = this.root.getBoundingClientRect();
-        const x1 = fromRect.left + fromRect.width / 2 - rootRect.left;
-        const y1 = fromRect.top + fromRect.height / 2 - rootRect.top;
-        const x2 = toRect.left + toRect.width / 2 - rootRect.left;
-        const y2 = toRect.top + toRect.height / 2 - rootRect.top;
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-        line.setAttribute("class", "connection-line");
-
-        const isPowered = from.node.internalState.outputs[from.outputIndex];
-        line.classList.toggle("powered", isPowered);
-
-        line.addEventListener('contextmenu', this.onRightClickLine.bind(this))
-        this.svg.appendChild(line);
-    }
-
-    onRightClickLine (event) {
-        event.preventDefault();
-
-        let connectionIndex = this.getConnectionByElement(event.target);
-        const connection = this.connections[connectionIndex];
-        
-        this.contextMenu.show([{
-            label: `Delete connection from ${connection.from.node} to ${connection.to.node}`,
-            onClick: () => this.deleteConnection(connectionIndex)
-        }], event.clientX, event.clientY);
+    cancelTemporaryConnection() {
+        this.connectingFrom = null;
+        this.connectionCanvas.clearTemporaryConnection();
     }
 
     updateConnections() {
-        this.svg.innerHTML = '';
-        this.lines = [];
-        this.connections.forEach((conn, index) => {
-            const fromNode = this.nodes.find(n => n.id === conn.from.node);
-            const toNode = this.nodes.find(n => n.id === conn.to.node);
-            this.drawConnection({ node: fromNode, outputIndex: conn.from.output }, { node: toNode, inputIndex: conn.to.input }, index);
-        });
+        this.connectionCanvas.updateConnections();
     }
 
     deleteNode(nodeId) {
@@ -213,19 +187,19 @@ export default class Workspace {
         node.dom.element.remove();
         this.nodes.splice(nodeIndex, 1);
         this.connections = this.connections.filter(conn => conn.from.node !== nodeId && conn.to.node !== nodeId);
-        this.updateConnections();
+        this.connectionCanvas.updateConnections();
         this.dirty = true;
         this.simulate();
     }
 
-    getConnectionByElement (element) {
-        return Object.values(this.svg.children).findIndex(svg => svg == element);
+    getConnectionByElement(element) {
+        return this.connectionCanvas.getConnectionByElement(element);
     }
 
     deleteConnection(index) {
         if (index < 0 || index >= this.connections.length) return;
         this.connections.splice(index, 1);
-        this.updateConnections();
+        this.connectionCanvas.updateConnections();
         this.dirty = true;
         this.simulate();
     }
@@ -331,7 +305,7 @@ export default class Workspace {
             node.updateVisuals();
         })
 
-        this.updateConnections();
+        this.connectionCanvas.updateConnections();
 
         console.log(inputValues, outputValues);
     }
