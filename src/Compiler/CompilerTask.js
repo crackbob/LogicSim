@@ -9,17 +9,21 @@ export default class CompilerTask {
             instanceCompiled: {},
             call: this.callFromComponent.bind(this),
             compileForThis: this.compileForComponent.bind(this),
+            componentState: {}
         };
     }
 
-    callFromComponent (name, ...inputs) {
-        let target = this.compilerInstance.library[name]?.execute;
-
-        if (!target) {
-            target = this.scope.instanceCompiled[name]?.execute;
+    callFromComponent (rawComponentName, name, ...inputs) {
+        const targetDefinition = this.compilerInstance.library?.[name] || this.scope.instanceCompiled[name];
+        const returnValues = targetDefinition.execute(...inputs);
+        
+        this.scope.componentState[rawComponentName] = {
+            inputs: [...inputs],
+            outputs: returnValues,
+            scope: targetDefinition.scope
         }
 
-        return target(...inputs);
+        return returnValues;
     }
 
     compileForComponent (componentName) {
@@ -121,7 +125,7 @@ export default class CompilerTask {
             nameToCall = rawComponentName;
         }
 
-        return `${stringUtils.indent}${keyword}${returnArrayStr} = this.call("${nameToCall}", ${stringUtils.strArray(inputs, false)}); ${stringUtils.newLine}`;
+        return `${stringUtils.indent}${keyword}${returnArrayStr} = this.call("${rawComponentName}", "${nameToCall}", ${stringUtils.strArray(inputs, false)}); ${stringUtils.newLine}`;
     }
 
     buildFunctionBody () {

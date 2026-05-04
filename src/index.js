@@ -16,11 +16,11 @@ let library = {
     },
 }
 
-let test = new Compiler(library);
+let compilerInstance = new Compiler(library);
 
 Object.keys(presets).forEach(presetName => {
-    library[presetName] = test.toComponent(presets[presetName])
+    library[presetName] = compilerInstance.toComponent(presets[presetName])
 })
 
-window.test = test;
+window.compilerInstance = compilerInstance;
 window.mathUtils = mathUtils;

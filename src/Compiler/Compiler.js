@@ -3,6 +3,7 @@ import CompilerTask from "./CompilerTask";
 export default class Compiler {
     constructor (library) {
         this.library = library;
+        this.tasks = [];
     }
 
     compile (components) {
@@ -11,16 +12,18 @@ export default class Compiler {
     }
 
     toComponent (components) {
-        this.task = new CompilerTask(this, components);
+        const task = new CompilerTask(this, components);
+        this.tasks.push(task);
 
         return {
-            inputs: this.task.getComponentsByType("input").length,
-            outputs: this.task.getTotalOutputs(),
-            externals: this.task.getComponentsByType("external").length,
-            instanceCompilations: this.task.getComponentsToCompile().length,
-            execute: this.task.compile(),
-            components: structuredClone(components),
-            clone: () => this.compile(components)
+            inputs: task.getComponentsByType("input").length,
+            outputs: task.getTotalOutputs(),
+            externals: task.getComponentsByType("external").length,
+            instanceCompilations: task.getComponentsToCompile().length,
+            execute: task.compile(),
+            components: components,
+            scope: task.scope,
+            clone: () => compile(components)
         }
     }
 }
