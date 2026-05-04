@@ -4,6 +4,31 @@ body {
     --theme-color: #161616;
 }
 
+#toolbar {
+    position: absolute;
+    padding: 10px;
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#toolbar button {
+    margin: 0;
+    padding: 8px 12px;
+    border: none;
+    background: #242424;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.15s ease;
+}
+
+#toolbar button:hover {
+    background: #3a3a3a;
+    transform: translateY(-1px);
+}
+
 .root {
     background: var(--theme-color);
     width: 100vw;
@@ -12,8 +37,50 @@ body {
     font-family: sans-serif;
 }
 
+.context-menu {
+    position: fixed;
+    z-index: 999;
+    background: #222;
+    border: 1px solid #444;
+    padding: 6px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    display: none;
+}
+
+.context-menu button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: white;
+    padding: 8px 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.context-menu button:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.connections {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+}
+
+.connection-line {
+    pointer-events: stroke;
+    stroke: rgb(5, 5, 5);
+    stroke-width: 4;
+    stroke-linecap: round;
+    opacity: 0.9;
+}
+
 .component {
     --component-primary-color: rgb(50, 50, 50);
+    --power-color: rgb(255, 0, 0);
     --component-outline-color: color-mix(in srgb, var(--component-primary-color) 75%,rgb(0, 0, 0));
     --component-text-color: white;
 
@@ -31,7 +98,74 @@ body {
 
     outline: 2px solid var(--component-outline-color);
     border-bottom: 5px solid var(--component-outline-color);
-    background: var(--component-primary-color)
+    background: var(--component-primary-color);
+}
+
+.component.powered {
+    outline: 2px solid var(--power-color);
+}
+
+.input-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    margin: 5px;
+}
+
+.switch-track {
+    position: relative;
+    width: 40px;
+    height: 18px;
+    background: rgba(255,255,255,0.28);
+    margin-right: 8px;
+}
+
+.switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: rgb(160, 160, 160);
+    transition: transform 0.2s ease;
+}
+
+.input-switch.on .switch-knob {
+    transform: translateX(22px);
+    background: white;
+}
+
+.switch-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.input-port {
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: rgb(255, 255, 255);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.output-port {
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: rgb(255, 255, 255);
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 .component-label {
