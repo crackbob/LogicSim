@@ -209,12 +209,21 @@ export default class Workspace {
 
         this.nodes.forEach(node => {
             if (node.name === "input") {
-                components[node.id] = { inputs: [], outputs: [] };
+                components[node.id] = { 
+                    inputs: [],
+                    outputs: []
+                };
             } else if (node.name.startsWith("output")) {
-                components[node.id] = { outputs: new Array(node.definition.inputs).fill(0) };
+                components[node.id] = { 
+                    outputs: new Array(node.definition.inputs).fill(0)
+                };
             } else {
-                components[node.id] = { inputs: new Array(node.definition.inputs).fill(0) };
+                components[node.id] = { 
+                    inputs: new Array(node.definition.inputs).fill(0)
+                };
             }
+
+            components[node.id].position = node.position;
         });
 
         this.connections.forEach(conn => {
@@ -234,6 +243,97 @@ export default class Workspace {
         });
 
         return components;
+    }
+
+    // im so sorry, ill rewrite you soon (maybe)
+    editComponent(name) {
+        const comp = this.compiler.library[name];
+
+        this.currentComponentName = name;
+
+        this.nodes.forEach(n => n.dom.element.remove());
+        this.nodes = [];
+        this.connections = [];
+        this.connectionCanvas.updateConnections();
+
+        const def = comp.components;
+
+        Object.entries(def).forEach(([id, data]) => {
+            const parsed = stringUtils.parseComponentKey(id);
+            const type = parsed.type;
+
+            const definition = this.compiler.library[type];
+            if (!definition) return;
+
+            const NodeClass = this.extendedComponents[type] || NodeElement;
+
+            if (!def.outputs) {
+                const node = new NodeClass(this, parsed.componentId, definition);
+
+                node.position = data.position || { x: 100, y: 100 };
+                node.dom.element.style.left = node.position.x + "px";
+                node.dom.element.style.top = node.position.y + "px";
+
+                this.nodes.push(node);
+                return;
+            }
+
+            if (def.outputs) {
+                def.outputs.forEach((_, i) => {
+                    const nodeId = `${id}`;
+                    console.log(definition)
+
+                    const node = new NodeClass(this, nodeId, definition);
+
+                    node.position = {
+                        x: (data.position?.x || 100),
+                        y: (data.position?.y || 100) + (i * 60)
+                    };
+
+                    node.dom.element.style.left = node.position.x + "px";
+                    node.dom.element.style.top = node.position.y + "px";
+
+                    this.nodes.push(node);
+                });
+            }
+        });
+
+        Object.entries(def).forEach(([toId, data]) => {
+            if (data.inputs) {
+                data.inputs.forEach((input, inputIndex) => {
+                    if (!input) return;
+
+                    let parsed = stringUtils.parseComponentKey(input);
+                    let parsedOutput = stringUtils.parseComponentKey(toId);
+
+                    this.connections.push({
+                        from: { node: parsed.componentId, output: parsed.valueIndex },
+                        to: { node: toId, input: inputIndex },
+                        bends: []
+                    });
+                });
+            }
+
+            if (data.outputs) {
+                data.outputs.forEach((output, outputIndex) => {
+                    if (!output) return;
+
+                    let parsed = stringUtils.parseComponentKey(output);
+                    let parsedOutput = stringUtils.parseComponentKey(toId);
+                    
+                    this.connections.push({
+                        from: { node: parsed.componentId, output: parsed.valueIndex },
+                        to: { node: toId, input: outputIndex },
+                        bends: []
+                    });
+                });
+            }
+        });
+
+        this.connectionCanvas.updateConnections();
+
+        this.dirty = false;
+        this.simulate();
     }
 
     compile () {
@@ -295,7 +395,7 @@ export default class Workspace {
         });
 
         this.nodes.forEach(node => {
-            let state = this.compiler.library.test.scope.componentState[node.id];
+            let state = this.compiler.library[this.currentComponentName].scope.componentState[node.id];
 
             if (state) {
                 node.internalState.inputs = state.inputs;

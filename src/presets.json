@@ -108,13 +108,7 @@
         },
 
         "output_0": {
-            "outputs": [
-                "adder_3_0",
-                "adder_2_0",
-                "adder_1_0",
-                "adder_0_0",
-                "adder_3_1"
-            ]
+            "outputs": ["adder_3_0", "adder_2_0", "adder_1_0", "adder_0_0", "adder_3_1"]
         }
     },
 
@@ -177,20 +171,11 @@
         },
 
         "output_0": {
-            "outputs": [
-                "adder4_0_0",
-                "adder4_0_1",
-                "adder4_0_2",
-                "adder4_0_3"
-            ]
+            "outputs": ["adder4_0_0", "adder4_0_1", "adder4_0_2", "adder4_0_3"]
         },
 
         "output_3": {
-            "outputs": [
-                "adder4_0_4",
-                "adder4_0_0",
-                "and_2_0"
-            ]
+            "outputs": ["adder4_0_4", "adder4_0_0", "and_2_0"]
         }
     },
 
@@ -367,6 +352,77 @@
         },
         "output_0": {
             "outputs": ["tribuf_0_0"]
+        }
+    },
+    "mux4": {
+        "inputDigit4_0": {
+            "inputs": [],
+            "position": { "x": 23,  "y": 205 }
+        },
+        "inputDigit4_1": {
+            "inputs": [],
+            "position": { "x": 22,  "y": 479 }
+        },
+        "input_0": {
+            "inputs": [],
+            "outputs": [],
+            "position": { "x": 30,  "y": 676 }
+        },
+        "and_0": {
+            "inputs": ["inputDigit4_0_0", "not_0_0"],
+            "position": { "x": 479,  "y": 128 }
+        },
+        "and_1": {
+            "inputs": ["inputDigit4_0_1", "not_0_0"],
+            "position": { "x": 478,  "y": 202 }
+        },
+        "and_2": {
+            "inputs": ["inputDigit4_0_2", "not_0_0"],
+            "position": { "x": 476,  "y": 271 }
+        },
+        "and_3": {
+            "inputs": ["inputDigit4_0_3", "not_0_0"],
+            "position": { "x": 474,  "y": 342 }
+        },
+        "and_4": {
+            "inputs": ["inputDigit4_1_0", "input_0_0" ],
+            "position": { "x": 482,  "y": 465 }
+        },
+        "and_5": {
+            "inputs": ["inputDigit4_1_1", "input_0_0"],
+            "position": { "x": 484,  "y": 538 }
+        },
+        "and_6": {
+            "inputs": ["inputDigit4_1_2", "input_0_0"],
+            "position": { "x": 484,  "y": 610 }
+        },
+        "and_7": {
+            "inputs": ["inputDigit4_1_3", "input_0_0"],
+            "position": { "x": 483,  "y": 685 }
+        },
+        "not_0": {
+            "inputs": ["input_0_0"],
+            "position": { "x": 243,  "y": 394 }
+        },
+        "outputDigit4_0": {
+            "outputs": ["or_0_0", "or_3_0", "or_2_0", "or_1_0"],
+            "position": { "x": 1327, "y": 357 }
+        },
+        "or_0": {
+            "inputs": ["and_0_0", "and_4_0"],
+            "position": { "x": 848, "y": 314 }
+        },
+        "or_1": {
+            "inputs": ["and_3_0", "and_7_0"],
+            "position": { "x": 858, "y": 548 }
+        },
+        "or_2": {
+            "inputs": ["and_2_0", "and_6_0"],
+            "position": { "x": 856, "y": 469 }
+        },
+        "or_3": {
+            "inputs": ["and_1_0", "and_5_0"],
+            "position": { "x": 853, "y": 389 }
         }
     }
 }

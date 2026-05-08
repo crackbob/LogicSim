@@ -14,10 +14,16 @@ export default {
     
     parseComponentKey (name) {
         let split = name.split("_");
+
+        let type = split[0];
+        let index = parseInt(split[1] || 0);
+        let valueIndex = parseInt(split[2] || 0);
+
         return {
-            type: split[0],
-            index: parseInt(split[1] || 0),
-            valueIndex: parseInt(split[2] || 0)
+            type,
+            index,
+            valueIndex,
+            componentId: `${type}_${index}`
         }
     }
 }

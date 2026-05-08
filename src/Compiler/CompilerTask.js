@@ -40,6 +40,20 @@ export default class CompilerTask {
         return this.getComponentNamesByType(type).map(p => this.components[p]);
     }
 
+    getTotalInputs () {
+        const inputs = this.getComponentNamesByType("input");
+        let count = 0;
+
+        inputs.forEach(rawInputName => {
+            const parsed = stringUtils.parseComponentKey(rawInputName);
+            const definition = this.compilerInstance.library[parsed.type];
+
+            count += definition.outputs;
+        });
+
+        return count;
+    }
+
     buildFunctionArguments () {
         const inputs = this.getComponentNamesByType("input");
         const returnValue = [];

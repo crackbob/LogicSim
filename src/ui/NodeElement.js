@@ -38,14 +38,23 @@ export default class NodeElement {
         
         this.dom.element = element;
 
+        let contextMenuActions = [
+            {
+                label: `Delete ${this.definition.name.toUpperCase()}`,
+                onClick: () => this.workspace.deleteNode(this.id)
+            }
+        ]
+
+        if (this.definition.components) {
+            contextMenuActions.push({
+                label: `Edit ${this.definition.name.toUpperCase()}`,
+                onClick: () => this.workspace.editComponent(this.name)
+            })
+        }
+
         this.dom.element.addEventListener('contextmenu', (event) => {
             event.preventDefault();
-            this.workspace.connectionCanvas.contextMenu.show([
-                {
-                    label: `Delete ${this.definition.name.toUpperCase()}`,
-                    onClick: () => this.workspace.deleteNode(this.id)
-                }
-            ], event.clientX, event.clientY);
+            this.workspace.connectionCanvas.contextMenu.show(contextMenuActions, event.clientX, event.clientY);
         });
 
         this.inputs = [];

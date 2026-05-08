@@ -18,7 +18,7 @@ export default class Compiler {
 
         return {
             name: name,
-            inputs: task.getComponentsByType("input").length,
+            inputs: task.getTotalInputs(),
             outputs: task.getTotalOutputs(),
             externals: task.getComponentsByType("external").length,
             instanceCompilations: task.getComponentsToCompile().length,
